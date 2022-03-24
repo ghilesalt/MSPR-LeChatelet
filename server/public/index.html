@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>MSPR</title>
+  </head>
+  <body>
+    <div class="nav">
+      <a href="#" class="menu-activator"><i class="ion-ios-more"></i></a>
+      <i class="ion-cube"></i>
+      <a href="#" class="white link"
+        ><i class="ion-ios-redo-outline"></i><i class="ion-ios-redo hidden"></i
+      ></a>
+    </div>
+
+    <div class="container login page">
+      <div class="inner">
+        <div class="panel panel-left">
+          <div class="panel-content">
+            <div class="image-background"></div>
+          </div>
+        </div>
+        <div class="panel panel-right">
+          <div class="panel-content">
+            <form class="form" id="form-login">
+              <h1>S'authentifier</h1>
+              
+              <div class="group">
+                <input type="text" required name="userName" />
+                <span class="highlight"></span>
+                <label>Votre Nom d'utilisateur</label>
+              </div>
+              <div class="group">
+                <input type="password" required name="password" />
+                <span class="highlight"></span>
+                <label>Votre Mot de passe</label>
+                
+               
+              </div>
+              <a onclick="getLogin(event)" class="send-btn">Se connecter</a>
+            </form>
+            <html>
+
+            <form class="form inactive" id="form-token">
+              <h1>Mettez votre token</h1>
+              <div class="group">
+                <input type="text" required name="token" />
+                <span class="highlight"></span>
+                <label>Votre token</label>
+              </div>
+              <div id="error-token" class="error"></div>
+              <button
+                onclick="verifyToken(event)"
+                type="submit"
+                class="send-btn"
+              >
+                Envoyer
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="home page inactive">
+      <h1>
+        Bonjour <span class="userNameSpan"></span> ! Bienvenue Dans le portail,
+        Le CHATELET
+      </h1>
+    </div>
+
+    <div class="alerts"></div>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js"
+      integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="script.js"></script>
+  </body>
+</html>
