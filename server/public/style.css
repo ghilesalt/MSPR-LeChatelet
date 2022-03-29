@@ -400,3 +400,7 @@ body.menu-active .menu::before {
 .home {
   margin-top: 70px;
 }
+
+.g-recaptcha{
+  display: none;
+}

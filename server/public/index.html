@@ -44,12 +44,12 @@
                 <input type="password" required name="password" />
                 <span class="highlight"></span>
                 <label>Votre Mot de passe</label>
-                
-               
-              </div>
-              <a onclick="getLogin(event)" class="send-btn">Se connecter</a>
+                <br>
+                    <div id="g-recaptcha" class="g-recaptcha"></div>
+                    <button type="submit" onclick="getLogin(event)" class="send-btn">Se connecter</button>
+                </div>
             </form>
-            <html>
+              
 
             <form class="form inactive" id="form-token">
               <h1>Mettez votre token</h1>
@@ -75,11 +75,13 @@
     <div class="home page inactive">
       <h1>
         Bonjour <span class="userNameSpan"></span> ! Bienvenue Dans le portail,
-        Le CHATELET
+        LeChatelet
       </h1>
     </div>
 
     <div class="alerts"></div>
+
+
 
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.0/axios.min.js"
@@ -87,6 +89,14 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="script.js"></script>
+    <script>
+      function onloadCallback(){
+        grecaptcha.render('g-recaptcha', {
+          'sitekey' : '6LdqxiAfAAAAAGL1P79dd93pUmnw36Dj8D2pkObp'
+        });
+      }
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"></script>
+  <script src="script.js"></script>
   </body>
 </html>

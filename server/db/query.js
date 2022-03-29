@@ -41,9 +41,22 @@ async function saveUser(db, data) {
   return getUserByName(db, data.name);
 }
 
+async function updateUser(db, data) {
+  console.log(data);
+  let sql = "UPDATE user set name = ?, ip = ?, navigator = ? where id = ?";
+
+  db.run(sql, [data.name, data.ip, data.navigator, data.id], (err, row) => {
+    if (err) {
+      return console.error(err.message);
+    }
+  });
+  return getUserByName(db, data.name);
+}
+
 module.exports = {
   getUserById,
   getUserByName,
   saveUser,
+  updateUser
 };
 

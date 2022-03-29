@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@exom-dev/captcha": "^0.1.0",
+    "axios": "^0.26.1",
     "connect-flash": "^0.1.1",
     "express": "^4.17.2",
     "express-brute": "^1.0.1",
@@ -19,6 +20,7 @@
     "express-rate-limit": "^6.3.0",
     "express-session": "^1.17.2",
     "fail2ban": "^1.0.2",
+    "googleclientlogin": "^0.2.8",
     "ioredis": "^4.28.5",
     "ldap-authentication": "^2.2.9",
     "moment": "^2.29.1",
@@ -26,7 +28,8 @@
     "passport": "^0.5.2",
     "rate-limiter-flexible": "^2.3.6",
     "redis": "^4.0.4",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "urlencode": "^1.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

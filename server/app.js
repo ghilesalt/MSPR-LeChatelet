@@ -2,94 +2,46 @@
 const { authenticate } = require("ldap-authentication");
 // https://www.npmjs.com/package/node-2fa
 const twofactor = require("node-2fa");
+const rateLimit = require('express-rate-limit')
 
+// Apply the rate limiting middleware to all requests
 const express = require("express");
 const { connectDB } = require("./db");
-const { getUserByName, saveUser, getUserById } = require("./db/query");
+const { getUserByName, saveUser, getUserById, updateUser } = require("./db/query");
 
 const db = connectDB();
 
 const app = express();
 
-const { response } = require("express");
-
-
-
 app.use(express.static("./public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+const apiLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 10, // Limit each IP to 10 requests per `window` (here, per 15 minutes)
+});
+
+app.use(apiLimiter)
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");
 });
 
 
-const rateLimit = require('express-rate-limit');
-const Redis = require('ioredis');
-
-
-
-const redis = new Redis();
-// Each IP can only send 5 login requests in 10 minutes
-const loginRateLimiter = rateLimit({ max: 5, windowMS: 1000 * 60 * 10 });
-
-const maxNumberOfFailedLogins = 3;
-const timeWindowForFailedLogins = 60 * 60 * 1;
-
-
-
-
-app.get('login', loginRateLimiter, async (req, res) => {
-  const userData = req.body;
-  const keys = Object.keys(userData);
- // check user is not attempted too many login requests
- const userAttempts = await redis.get(userData);
- if (userAttempts > maxNumberOfFailedLogins) {
-   return res.status(429).send("Too Many Attempts try it one hour later")
- }
-
- // Let's check user
- const loginResult = await authenticate({
-  ldapOpts: { url: "ldap://192.168.0.150" },
-  // adminDn: "cn=read-only-admin,dc=clin,dc=local",
-  // adminPassword: "Vqatqbpp1954",
-  userDn: `cn=${userData.name},ou=ldap,dc=clin,dc=local`,
-  userPassword: userData.password,
-  userSearchBase: "dc=clin,dc=local",
-  usernameAttribute: "cn",
-  username: userData.name,
-});
-
- // user attempt failed
- if(!loginResult) {
-   await redis.set(userData, ++userAttempts, 'ex', timeWindowForFailedLogins)
-   res.send("failed")
- } else {
-  // successful login
-  await redis.del(userData)
-  res.send("success")
- }
-})
-
-app.post("/login", loginRateLimiter,async (req, res) => {
+app.post("/login", async (req, res) => {
   let user = null;
   const userData = req.body;
   const keys = Object.keys(userData);
-
-  const userAttempts = await redis.get(userData.name);
-   if (userAttempts > maxNumberOfFailedLogins) {
-     return res.status(429).send("Too Many Attempts try it one hour later");
-   }
-
 
   if (!keys.includes("password") && !keys.includes("name"))
     return res.status(401);
 
   try {
     // connecter à notre ad
-
     user = await authenticate({
-      ldapOpts: { url: "ldap://192.168.0.150" },
+      /*IP maison ldapOpts: { url: "ldap://192.168.0.150" },*/
+      ldapOpts: { url: "ldap://10.60.22.25" },
       // adminDn: "cn=read-only-admin,dc=clin,dc=local",
       // adminPassword: "Vqatqbpp1954",
       userDn: `cn=${userData.name},ou=ldap,dc=clin,dc=local`,
@@ -101,22 +53,15 @@ app.post("/login", loginRateLimiter,async (req, res) => {
   } catch (error) {
     //console.log(error);
   }
-  
 
-  //console.log(user);
+  console.log(user);
 
-  if (!user){
-
-    try{
-      await redis.set(userData.name, ++userAttempts, 'ex', timeWindowForFailedLogins);
-    } catch (error){
-        return res.status(401).json({
-        error:
-          "Nous n'avons pas trouvé d'utilisateurs avec les identifiants fournies",
-        user: null,
-      });
-    }  
-  } 
+  if (!user)
+    return res.status(401).json({
+      error:
+        "Nous n'avons pas trouvé d'utilisateurs avec les identifiants fournies",
+      user: null,
+    });
 
   // bdd pour 2FA
   let userRetrieved = await getUserByName(db, user.displayName);
@@ -167,6 +112,14 @@ app.get("/verify/token/:userId/:token", async (req, res) => {
 //   res.json(newToken);
 // });
 
+
+app.put("/user", async (req, res) => {
+  let user = req.body;
+  user = await updateUser(db, user);
+  return res.json(user);
+})
+
+
 // 404
 app.use((req, res) => {
   res.status(404).json({
@@ -174,10 +127,7 @@ app.use((req, res) => {
   });
 });
 
-/*const PORT = 3000;
-app.listen(PORT, () => {
-  console.log("Server running in port " + PORT);
-});*/
+
 
 const https = require('https');
 const fs = require('fs');
@@ -188,7 +138,11 @@ const options = {
   
 };
 
-https.createServer(options, function (req, res) {
-  res.writeHead(200);
-  res.end("hello world\n");
-}).listen(3000);
+const PORT = 3000;
+
+https.createServer(options, app).listen(PORT, () => {
+  console.log("Server running in port " + PORT);
+})
+
+
+//app.listen(PORT)

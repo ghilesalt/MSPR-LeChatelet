@@ -18,7 +18,7 @@ function connectDB() {
 function generateTables(db) {
   try {
     db.run(
-      "CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, secret TEXT, uri TEXT, qr TEXT)",
+      "CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, secret TEXT, uri TEXT, qr TEXT, ip TEXT, navigator TEXT)",
       (res, err) => {
         if (err) {
           console.log(err);
